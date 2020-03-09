@@ -1,5 +1,6 @@
 from vpython import *
 from time import time as t
+from math import sin, cos, tau
 
 
 def make_side(pos_s=[vec(0, 0, 0) for _ in range(4)], col=color.white):
@@ -56,9 +57,12 @@ class Cube:
 
         self.rng = range(len(self.parts))
 
-    def set_pos(self, pos):
+    def set_pos(self, pos=None, x=0, y=0, z=0):
         for i in self.rng:
-            self.parts[i].pos = self.pts[i] + pos
+            if pos is not None:
+                self.parts[i].pos = self.pts[i] + pos
+            else:
+                self.parts[i].pos = self.pts[i] + vec(x, y, z)
 
     def move(self, bias=None, x=0, y=0, z=0):
         if bias is not None:
@@ -66,11 +70,21 @@ class Cube:
         else:
             self.set_pos(self.pos+vec(x, y, z))
 
+def circ(alph, r=1):
+    va = alph * tau
+    x = r * cos(va)
+    y = r * sin(va)
+    return x, y
+
 canvas(width=1500, height=690)
 
 st = vec(-1, -1, -1)
 cu = Cube(st)
+c = 0
 
 while 1:
-    cu.move(x=0.00005)
-    pass
+    pos = circ(c/8000)
+    #print(pos)
+    cu.set_pos(x=pos[0]-1, y=pos[1]-1)#0.00005)
+
+    c += 1
