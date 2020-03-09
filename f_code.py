@@ -39,8 +39,8 @@ class Cube:
                 for i in range(3):
                     if i==1 and j==1 and k==1:
                         continue
-                    list.append(make_cubelet([color.red, color.blue, color.green,
-                        color.purple, color.yellow, color.cyan], pos = vec(i, j, k), size=0.8))
+                    list.append(make_cubelet([color.green, color.red, color.yellow,
+                        color.blue, color.orange, color.white,], pos = vec(i, j, k), size=0.8))
 
 cu = Cube()
 
