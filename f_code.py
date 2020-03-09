@@ -54,9 +54,11 @@ class Cube:
 
         self.pos = self.parts[0].pos
 
+        self.rng = range(len(self.parts))
+
     def set_pos(self, pos):
-        for cubl in self.parts:
-            cubl.pos = pos
+        for i in self.rng:
+            self.parts[i].pos = self.pts[i] + pos
 
     def move(self, bias=None, x=0, y=0, z=0):
         if bias is not None:
@@ -70,4 +72,5 @@ st = vec(-1, -1, -1)
 cu = Cube(st)
 
 while 1:
-    pass#cu.set_pos(cu)
+    cu.move(x=0.00005)
+    pass
