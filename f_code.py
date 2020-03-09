@@ -70,6 +70,7 @@ class Cube:
         else:
             self.set_pos(self.pos+vec(x, y, z))
 
+
 def circ(alph, r=1):
     va = alph * tau
     x = r * cos(va)
@@ -84,7 +85,6 @@ c = 0
 
 while 1:
     pos = circ(c/8000)
-    #print(pos)
-    cu.set_pos(x=pos[0]-1, y=pos[1]-1)#0.00005)
+    cu.set_pos(x=pos[0]-1, y=pos[1]-1)
 
     c += 1
