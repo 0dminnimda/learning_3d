@@ -1,4 +1,5 @@
 from vpython import *
+from time import time as t
 vc = vector
 
 def make_side(pos_s=[vec(0, 0, 0) for _ in range(4)], col=color.white):
@@ -32,17 +33,20 @@ def make_cubelet(col, pos=vec(0, 0, 0), size=1):
     return compound([side for side in sides])
 
 class Cube:
-    def __init__(self):
-        list = []
-        for k in range(3):
-            for j in range(3):
-                for i in range(3):
-                    if i==1 and j==1 and k==1:
-                        continue
-                    list.append(make_cubelet([color.green, color.red, color.yellow,
-                        color.blue, color.orange, color.white,], pos = vec(i, j, k), size=0.8))
+    def __init__(self, st_pt=vec(0, 0, 0)):
+        cubl = make_cubelet([color.green, color.red, color.yellow,
+                        color.blue, color.orange, color.white,], size=0.8)
+        cubl.visible = False
 
-cu = Cube()
+        self.list = [cubl.clone(pos=st_pt + vec(i, j, k))
+                for k in range(3) for j in range(3) for i in range(3)
+                if i!=1 or j!=1 or k!=1]
+
+        del cubl
+
+st = vec(-1, -1, -1)
+cu = Cube(st)
+#print([i.pos for i in cu.list])
 
 #while 1:
 #    cu.pos.x+=0.000002
