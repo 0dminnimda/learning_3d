@@ -40,13 +40,13 @@ class Cube:
     def __init__(self, st_pt=vec(0, 0, 0)):
         cubl = make_cubelet([
             color.green, color.red, color.yellow,
-            color.blue, color.orange, color.white,], size=0.8)
+            color.blue, color.orange, color.white,], size=0.7)
         cubl.visible = False
 
         self.pts = [
             vec(i, j, k)
-            for k in range(3) for j in range(3) for i in range(3)
-            if i!=1 or j!=1 or k!=1]
+            for k in range(3) for j in range(3) for i in range(3)]
+            #if i!=1 or j!=1 or k!=1]
 
         self.parts = [
             cubl.clone(pos=st_pt + pt)
@@ -79,6 +79,14 @@ class Cube:
     def get(self):
         return compound(self.parts)
 
+    def rot(self, alph=0, ind=None):
+        if ind is None:
+            nums = self.rng
+        else:
+            nums = ind
+        for i in nums:
+            self.parts[i].rotate(alph)
+
 def circ(alph, r=1):
     va = alph * tau
     x = r * cos(va)
@@ -92,12 +100,25 @@ else:
 
 st = vec(-1, -1, -1)
 cu = Cube(st)
-ob = cu.get()
-c = 0.0005
+rot_ang = 0.005
+inds = [i for i in range(len(27))]
+
+# F, S, B,   U, E, D,   L, M, R
+# referring to https://en.wikipedia.org/wiki/Rubik%27s_Cube
+# section: Solutions: Move notation 
+F_s = inds[-9:]
+S_s = inds[9:-9]
+B_s = inds[:9]
+U_s = inds[6::9] + inds[7::9] + inds[8::9]
+E_s = inds[3::9] + inds[4::9] + inds[5::9]
+D_s = inds[::9] + inds[1::9] + inds[2::9]
+L_s = inds[::3]
+M_s = inds[1::3]
+R_s = inds[::-3]
+
 
 while 1:
     # rate(100)
-    pos = circ(c/50000, 0.5)
-    #cu.set_pos(x=pos[0], y=pos[1], ind=[0])#[i for i in range(9)])
+    cu.rot(radians(rot_ang), ind=M_s)
 
-    ob.rotate(radians(c))#, axis=vec(x,y,z), origin=vector(xo,yo,zo))
+    #ob.rotate(radians(c))#, axis=vec(x,y,z), origin=vector(xo,yo,zo))
