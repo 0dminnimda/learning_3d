@@ -1,6 +1,7 @@
 from vpython import *
 from time import time as t
 from math import sin, cos, tau
+from collections import namedtuple
 import os
 
 
@@ -43,11 +44,13 @@ class Cube:
             color.blue, color.orange, color.white,], size=0.7)
         cubl.visible = False
 
+        # aray with 
         self.pts = [
             vec(i, j, k)
             for k in range(3) for j in range(3) for i in range(3)]
             #if i!=1 or j!=1 or k!=1]
 
+        # array with cublits
         self.parts = [
             cubl.clone(pos=st_pt + pt)
             for pt in self.pts]
@@ -57,11 +60,29 @@ class Cube:
 
         del cubl
 
-        self.rng = range(len(self.parts))
+        self.range = range(len(self.parts))
+
+        inds = [i for i in range(27)]
+
+        # F, S, B,   U, E, D,   L, M, R
+        # referring to https://en.wikipedia.org/wiki/Rubik%27s_Cube
+        # section: Solutions: Move notation
+        tup_of_sides = namedtuple("sides", "F S B U E D L M R")
+        self.sides = tup_of_sides(
+            inds[-9:],
+            inds[9:-9],
+            inds[:9],
+            inds[6::9] + inds[7::9] + inds[8::9],
+            inds[3::9] + inds[4::9] + inds[5::9],
+            inds[::9] + inds[1::9] + inds[2::9],
+            inds[::3],
+            inds[1::3],
+            inds[::-3],
+        )
 
     def set_pos(self, pos=None, x=0, y=0, z=0, ind=None):
         if ind is None:
-            nums = self.rng
+            nums = self.range
         else:
             nums = ind
         for i in nums:
@@ -79,13 +100,17 @@ class Cube:
     def get(self):
         return compound(self.parts)
 
-    def rot(self, alph=0, ind=None):
+    def rot(self, alph=0, ind=None, axis=vec(0, 0, 1)):#, origin=vector(0, 0, 0)):
         if ind is None:
             nums = self.rng
         else:
             nums = ind
         for i in nums:
             self.parts[i].rotate(alph)
+
+    def rot_side(self, name, num_of_rots):
+        pass
+
 
 def circ(alph, r=1):
     va = alph * tau
@@ -101,24 +126,16 @@ else:
 st = vec(-1, -1, -1)
 cu = Cube(st)
 rot_ang = 0.005
-inds = [i for i in range(len(27))]
 
-# F, S, B,   U, E, D,   L, M, R
-# referring to https://en.wikipedia.org/wiki/Rubik%27s_Cube
-# section: Solutions: Move notation 
-F_s = inds[-9:]
-S_s = inds[9:-9]
-B_s = inds[:9]
-U_s = inds[6::9] + inds[7::9] + inds[8::9]
-E_s = inds[3::9] + inds[4::9] + inds[5::9]
-D_s = inds[::9] + inds[1::9] + inds[2::9]
-L_s = inds[::3]
-M_s = inds[1::3]
-R_s = inds[::-3]
+print(cu.sides)
+
+for i in cu.range:
+   label(pos=cu.parts[i].pos, text=f'{i}')
 
 
 while 1:
     # rate(100)
-    cu.rot(radians(rot_ang), ind=M_s)
+    #cu.rot(radians(rot_ang), ind=M_s)
 
-    #ob.rotate(radians(c))#, axis=vec(x,y,z), origin=vector(xo,yo,zo))
+    #ob.rotate(radians(c))#, axis=vec(0, 0, 1), origin=vector(xo,yo,zo))
+    pass
