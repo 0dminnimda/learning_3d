@@ -1,7 +1,6 @@
 from vpython import *
 from time import time as t
 from math import sin, cos, tau
-from collections import namedtuple
 import os
 
 
@@ -67,18 +66,18 @@ class Cube:
         # F, S, B,   U, E, D,   L, M, R
         # referring to https://en.wikipedia.org/wiki/Rubik%27s_Cube
         # section: Solutions: Move notation
-        tup_of_sides = namedtuple("sides", "F S B U E D L M R")
-        self.sides = tup_of_sides(
-            inds[-9:],
-            inds[9:-9],
-            inds[:9],
-            inds[6::9] + inds[7::9] + inds[8::9],
-            inds[3::9] + inds[4::9] + inds[5::9],
-            inds[::9] + inds[1::9] + inds[2::9],
-            inds[::3],
-            inds[1::3],
-            inds[::-3],
-        )
+        nms = "F S B U E D L M R".split(" ")
+        self.sides = {
+            nms[0]:inds[-9:],
+            nms[1]:inds[9:-9],
+            nms[2]:inds[:9],
+            nms[3]:inds[6::9] + inds[7::9] + inds[8::9],
+            nms[4]:inds[3::9] + inds[4::9] + inds[5::9],
+            nms[5]:inds[::9] + inds[1::9] + inds[2::9],
+            nms[6]:inds[::3],
+            nms[7]:inds[1::3],
+            nms[8]:inds[::-3],
+        }
 
     def set_pos(self, pos=None, x=0, y=0, z=0, ind=None):
         if ind is None:
@@ -100,20 +99,26 @@ class Cube:
     def get(self):
         return compound(self.parts)
 
-    def rot(self, alph=0, ind=None, axis=vec(0, 0, 1)):#, origin=vector(0, 0, 0)):
+    def rot(self, ang=0, ind=None, axis=vec(0, 0, 1), origin=None):
         if ind is None:
             nums = self.rng
         else:
             nums = ind
         for i in nums:
-            self.parts[i].rotate(alph)
+            if origin is not None:
+                self.parts[i].rotate(ang, axis=axis, origin=origin)
+            else:
+                self.parts[i].rotate(ang, axis=axis)
 
-    def rot_side(self, name, num_of_rots):
-        pass
+    def rot_side(self, name, ang=0, axis=vec(0, 0, 1)):
+        nums = self.sides[name.upper()]
+        mid = self.parts[nums[4]]
+        for i in nums:
+            self.parts[i].rotate(ang, axis=axis, origin=mid.pos)
 
 
-def circ(alph, r=1):
-    va = alph * tau
+def circ(ang, r=1):
+    va = ang * tau
     x = r * cos(va)
     y = r * sin(va)
     return x, y
@@ -127,15 +132,13 @@ st = vec(-1, -1, -1)
 cu = Cube(st)
 rot_ang = 0.005
 
-print(cu.sides)
-
 for i in cu.range:
    label(pos=cu.parts[i].pos, text=f'{i}')
 
 
 while 1:
     # rate(100)
-    #cu.rot(radians(rot_ang), ind=M_s)
+    cu.rot_side("f", (radians(rot_ang)))
 
     #ob.rotate(radians(c))#, axis=vec(0, 0, 1), origin=vector(xo,yo,zo))
     pass
