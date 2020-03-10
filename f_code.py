@@ -1,6 +1,7 @@
 from vpython import *
 from time import time as t
 from math import sin, cos, tau
+import os
 
 
 def make_side(pos_s=[vec(0, 0, 0) for _ in range(4)], col=color.white):
@@ -51,25 +52,32 @@ class Cube:
             cubl.clone(pos=st_pt + pt)
             for pt in self.pts]
 
-        del cubl
-
         self.pos = self.parts[0].pos
+        self.st_pt = st_pt
+
+        del cubl
 
         self.rng = range(len(self.parts))
 
-    def set_pos(self, pos=None, x=0, y=0, z=0):
-        for i in self.rng:
-            if pos is not None:
-                self.parts[i].pos = self.pts[i] + pos
-            else:
-                self.parts[i].pos = self.pts[i] + vec(x, y, z)
-
-    def move(self, bias=None, x=0, y=0, z=0):
-        if bias is not None:
-            self.set_pos(self.pos+bias)
+    def set_pos(self, pos=None, x=0, y=0, z=0, ind=None):
+        if ind is None:
+            nums = self.rng
         else:
-            self.set_pos(self.pos+vec(x, y, z))
+            nums = ind
+        for i in nums:
+            if pos is not None:
+                self.parts[i].pos = self.pts[i] + pos + self.st_pt
+            else:
+                self.parts[i].pos = self.pts[i] + vec(x, y, z) + self.st_pt
 
+    def move(self, bias=None, x=0, y=0, z=0, ind=None):
+        if bias is not None:
+            self.set_pos(self.pos+bias, ind=ind)
+        else:
+            self.set_pos(self.pos+vec(x, y, z), ind=ind)
+
+    def get(self):
+        return compound(self.parts)
 
 def circ(alph, r=1):
     va = alph * tau
@@ -77,14 +85,19 @@ def circ(alph, r=1):
     y = r * sin(va)
     return x, y
 
-canvas(width=1500, height=690)
+if os.name == "posix":
+    canvas(width=950, height=1870, ambient = color.white)
+else:
+    canvas(width=1500, height=690, ambient = color.white)
 
 st = vec(-1, -1, -1)
 cu = Cube(st)
-c = 0
+ob = cu.get()
+c = 0.0005
 
 while 1:
-    pos = circ(c/8000)
-    cu.set_pos(x=pos[0]-1, y=pos[1]-1)
+    # rate(100)
+    pos = circ(c/50000, 0.5)
+    #cu.set_pos(x=pos[0], y=pos[1], ind=[0])#[i for i in range(9)])
 
-    c += 1
+    ob.rotate(radians(c))#, axis=vec(x,y,z), origin=vector(xo,yo,zo))
