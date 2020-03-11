@@ -66,7 +66,7 @@ class Cube:
         # F, S, B,   U, E, D,   L, M, R
         # referring to https://en.wikipedia.org/wiki/Rubik%27s_Cube
         # section: Solutions: Move notation
-        nms = "F S B U E D L M R".split(" ")
+        self.names = nms = "F S B U E D L M R".split(" ")
         self.sides = {
             nms[0]:inds[-9:],
             nms[1]:inds[9:-9],
@@ -77,6 +77,20 @@ class Cube:
             nms[6]:inds[::3],
             nms[7]:inds[1::3],
             nms[8]:inds[::-3],
+        }
+
+        # value is array of 1 - 0-lvl vec (for ang of tunring side)
+        # and 2 - axis of turning side
+        self.side_rot = {
+            nms[0]:[vec(1, 0, 0), vec(0, 0, 1)],
+            nms[1]:[vec(1, 0, 0), vec(0, 0, 1)],
+            nms[2]:[vec(1, 0, 0), vec(0, 0, 1)],
+            nms[3]:[vec(1, 0, 0), vec(0, 1, 0)],
+            nms[4]:[vec(1, 0, 0), vec(0, 1, 0)],
+            nms[5]:[vec(1, 0, 0), vec(0, 1, 0)],
+            nms[6]:[vec(0, 0, 1), vec(1, 0, 0)],
+            nms[7]:[vec(0, 0, 1), vec(1, 0, 0)],
+            nms[8]:[vec(0, 0, 1), vec(1, 0, 0)],
         }
 
     def set_pos(self, pos=None, x=0, y=0, z=0, ind=None):
@@ -110,11 +124,13 @@ class Cube:
             else:
                 self.parts[i].rotate(ang, axis=axis)
 
-    def rot_side(self, name, ang=0, axis=vec(0, 0, 1)):
+    def rot_side(self, name, ang=0):
+        #self.side_rot[name][0]
         nums = self.sides[name.upper()]
-        mid = self.parts[nums[4]]
+        origin = self.parts[nums[4]].pos
+        axis = self.side_rot[name][1]
         for i in nums:
-            self.parts[i].rotate(ang, axis=axis, origin=mid.pos)
+            self.parts[i].rotate(ang, axis=axis, origin=origin)
 
 
 def circ(ang, r=1):
@@ -130,15 +146,19 @@ else:
 
 st = vec(-1, -1, -1)
 cu = Cube(st)
-rot_ang = 0.005
+rot_ang = 0.01
 
-for i in cu.range:
-   label(pos=cu.parts[i].pos, text=f'{i}')
+'''for i in cu.range:
+   label(pos=cu.parts[i].pos, text=f'{i}')'''
 
+# F, S, B,   U, E, D,   L, M, R
+nm = "L"
 
 while 1:
     # rate(100)
-    cu.rot_side("f", (radians(rot_ang)))
+    cu.rot_side(nm, (radians(rot_ang)))
+    print(degrees(cu.parts[cu.sides[nm][0]].axis.diff_angle(cu.side_rot[nm][0])))
+    if degrees(cu.parts[cu.sides[nm][0]].axis.diff_angle(cu.side_rot[nm][0])) >= 90:
+        pass#print(":)")
 
-    #ob.rotate(radians(c))#, axis=vec(0, 0, 1), origin=vector(xo,yo,zo))
     pass
