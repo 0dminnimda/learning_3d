@@ -146,19 +146,30 @@ else:
 
 st = vec(-1, -1, -1)
 cu = Cube(st)
-rot_ang = 0.01
+rot_ang = 0.5
+co = 0
 
 '''for i in cu.range:
    label(pos=cu.parts[i].pos, text=f'{i}')'''
 
 # F, S, B,   U, E, D,   L, M, R
-nm = "L"
+nm = "F"
+arr = [arrow(pos=i.pos, axis=i.axis) for i in cu.parts]
 
 while 1:
-    # rate(100)
+    rate(100)
+    if co == 200:
+        nm = "U"
+    elif co == 400:
+        nm = "L"
+
     cu.rot_side(nm, (radians(rot_ang)))
-    print(degrees(cu.parts[cu.sides[nm][0]].axis.diff_angle(cu.side_rot[nm][0])))
+    #print(degrees(cu.parts[cu.sides[nm][0]].axis.diff_angle(cu.side_rot[nm][0])))
     if degrees(cu.parts[cu.sides[nm][0]].axis.diff_angle(cu.side_rot[nm][0])) >= 90:
         pass#print(":)")
+    for i in cu.range:
+        arr[i].pos = cu.parts[i].pos
+        arr[i].axis = cu.parts[i].axis
 
     pass
+    co += 1
