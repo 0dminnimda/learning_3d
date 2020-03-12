@@ -6,19 +6,25 @@ if os.name == "posix":
 else:
     scene = canvas(width=1500, height=690)
 
-def recu(arr, c):
-    arr2 = []
-    cl = color.hsv_to_rgb(vec(c/28%1, 1, 1))
-    for i in arr:
-        arr2.append(box(pos=i.pos-i.axis/2, size=i.size*3/4, color=cl))
-        #arr2.append(box(pos=i.axis-i.pos/2, size=i.size/2, color=cl))
-    return arr2
+def recu(boxes, whole, c):
+    global ratio
+    arr = []
+    cl = color.hsv_to_rgb(vec(c/10%1, 1, 1))
+    for i in boxes:
+        arr.append(box(pos=i.pos-i.axis, size=i.size*ratio, color=cl))
+        arr.append(box(pos=i.pos+i.axis, size=i.size*ratio, color=cl))
+    comp = compound(boxes)
+    boxes.clear()
+    return arr, comp
 
-fb = [box()]
+boxes = [box()]
+whole = None
 c = 0
+ratio = 1/2
 
 while True:
     ev = scene.waitfor('mousedown mouseup')
     if ev.event == 'mousedown':
-        fb = recu(fb, c)
+        boxes, whole = recu(boxes, whole, c)
         c += 1
+        print(len(boxes) + 1)
