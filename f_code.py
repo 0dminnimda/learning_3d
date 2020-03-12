@@ -131,6 +131,8 @@ class Cube:
         axis = self.side_rot[name][1]
         for i in nums:
             self.parts[i].rotate(ang, axis=axis, origin=origin)
+        for i in range(1, len(nums)):
+            self.parts[nums[i]], self.parts[nums[i-1]] = self.parts[nums[i-1]], self.parts[nums[i]]
 
 
 def circ(ang, r=1):
@@ -153,23 +155,28 @@ co = 0
    label(pos=cu.parts[i].pos, text=f'{i}')'''
 
 # F, S, B,   U, E, D,   L, M, R
-nm = "F"
 arr = [arrow(pos=i.pos, axis=i.axis) for i in cu.parts]
+lbs = [label(pos=i.pos, text=f'{cu.parts.index(i)}') for i in cu.parts]
 
 while 1:
     rate(100)
-    if co == 200:
+    if co == 0:
+        nm = "F"
+        cu.rot_side(nm, (radians(90)))
+    elif co == 200:
         nm = "U"
-    elif co == 400:
+        cu.rot_side(nm, (radians(90)))
+    '''elif co == 400:
         nm = "L"
+        cu.rot_side(nm, (radians(90)))'''
 
-    cu.rot_side(nm, (radians(rot_ang)))
     #print(degrees(cu.parts[cu.sides[nm][0]].axis.diff_angle(cu.side_rot[nm][0])))
-    if degrees(cu.parts[cu.sides[nm][0]].axis.diff_angle(cu.side_rot[nm][0])) >= 90:
-        pass#print(":)")
+    '''if degrees(cu.parts[cu.sides[nm][0]].axis.diff_angle(cu.side_rot[nm][0])) >= 90:
+        pass#print(":)")'''
     for i in cu.range:
         arr[i].pos = cu.parts[i].pos
         arr[i].axis = cu.parts[i].axis
+        lbs[i].pos = cu.parts[i].pos
 
     pass
     co += 1
